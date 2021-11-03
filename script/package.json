@@ -1,0 +1,19 @@
+{
+  "name": "pixel-font-maker",
+  "version": "0.0.1",
+  "description": "Convert font image to font svg. =====",
+  "main": "index.js",
+  "dependencies": {
+    "require": "~2.4.20",
+    "fs": "~0.0.1-security",
+    "get-pixels": "~1.0.1",
+    "xmlbuilder": "~15.1.1",
+    "process": "~0.11.10"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "DriCro6663",
+  "license": "BSD",
+  "keywords": []
+}

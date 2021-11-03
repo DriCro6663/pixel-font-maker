@@ -1,0 +1,5 @@
+# Ignore the proxy directory
+./proxy/
+
+# Ignore the update files
+./git-commit/
