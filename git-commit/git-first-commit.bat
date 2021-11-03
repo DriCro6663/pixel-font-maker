@@ -9,15 +9,16 @@ echo git init
 git init
 
 @rem Commit all the files you have changed.
-echo git commit -m "first commit"
+echo git add .
 git add .
+echo git commit -m "first commit"
 git commit -m "first commit"
 
 @rem Set remote repository settings.
 echo git branch -M main
 git branch -M main
-echo git remote add origin https://github.com/DriCro6663/pixel-font-maker.git
-git remote add origin https://github.com/DriCro6663/pixel-font-maker.git
+echo git remote add origin https://DriCro6663@github.com/DriCro6663/pixel-font-maker.git
+git remote add origin https://DriCro6663@github.com/DriCro6663/pixel-font-maker.git
 
 @rem Check remote repository settings.
 echo git remote -v
