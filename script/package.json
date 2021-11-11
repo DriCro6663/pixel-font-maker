@@ -6,7 +6,7 @@
   "dependencies": {
     "require": "~2.4.20",
     "fs": "~0.0.1-security",
-    "get-pixels": "~1.0.1",
+    "get-pixels": "~3.3.3",
     "xmlbuilder": "~15.1.1",
     "process": "~0.11.10"
   },

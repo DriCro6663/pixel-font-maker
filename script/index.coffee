@@ -10,6 +10,12 @@ searchExt   = '.json'      # extract extension
 settingList = undefined    # main: settingList = loadFiles(imgPath, searchExt)
 #setting    = undefined    # main: setting = settingList[i]
 
+# font setting
+font_width = 1024
+font_height = 1024
+pixel_width = 8
+pixel_height = 8
+
 # load font-img folder setting.json
 loadFiles = (dirpath, ext) -> 
   fs.readdir(dirpath, (err, files) ->
@@ -38,14 +44,22 @@ class PixelImage
     @getPixel x + x2, y + y2 for x2 in [0..(width - 1)] for y2 in [0..(height - 1)]
 
 createSvg = (paths, setting)->
-  svg = builder.create 'svg', {version: '1.0', encoding: 'UTF-8', standalone: true}
-  svg.att xmlns: 'http://www.w3.org/2000/svg'
+  svg = builder.create 'svg', {encoding: 'UTF-8', standalone: true}
+  svg.att(
+    version: '1.1',
+    xmlns  : 'http://www.w3.org/2000/svg', 
+    width  : "#{font_width}", height: "#{font_height}", 
+    viewBox: "0 0 #{font_width} #{font_height}"
+  )
   font = svg
     .ele('def')
-      .ele 'font', {id: setting.name, 'horiz-adv-x': '1024'}
-  font.ele 'font-face', {'units-per-em': '1024', 'ascent':'1024', 'descent': '0'}
-  font.ele 'missing-glyph', {'horiz-adv-x': '1024'}
-  font.ele 'glyph', {'unicode': '&#x20;', 'd':'', 'horiz-adv-x': '512'}
+      .ele 'font', {id: setting.name, 'horiz-adv-x': "#{font_width}"}
+  font.ele 'font-face', {
+    'units-per-em': "#{font_height}", 'ascent':"#{font_height}", 'descent': '0',
+    'bbox':"0 0 #{font_width} #{font_height}"
+  }
+  font.ele 'missing-glyph', {'horiz-adv-x': "#{font_width}"}
+  font.ele 'glyph', {'unicode': '&#x20;', 'd':'', 'horiz-adv-x': "#{font_width / 2}"}
   for code, path of paths
     font.ele 'glyph', {
       'unicode': "&#x#{code.charCodeAt(0).toString(16)};",
@@ -86,7 +100,7 @@ pixelsToPath = (pixels, setting)->
       current = path
       x = path.x
       y = path.y
-      pathStr.push "M#{path.x * 1024 / setting.size} #{(setting.size-path.y) * 1024 / setting.size}"
+      pathStr.push "M#{path.x * font_width / pixel_width} #{(pixel_height-path.y) * font_height / pixel_height}"
       
       while !current.used
         current.used = true
@@ -108,26 +122,52 @@ pixelsToPath = (pixels, setting)->
   # 連続する同じ方向のパスの簡略化を行う
   pathStr
     .join('')
-    .replace(/R+/g, (match)-> "h#{match.length * 1024 / setting.size}")
-    .replace(/L+/g, (match)-> "h-#{match.length * 1024 / setting.size}")
-    .replace(/U+/g, (match)-> "v-#{match.length * 1024 / setting.size}")
-    .replace(/D+/g, (match)-> "v#{match.length * 1024 / setting.size}")
+    .replace(/R+/g, (match)-> "h#{match.length * font_width / pixel_width}")
+    .replace(/L+/g, (match)-> "h-#{match.length * font_width / pixel_width}")
+    .replace(/U+/g, (match)-> "v-#{match.length * font_height / pixel_height}")
+    .replace(/D+/g, (match)-> "v#{match.length * font_height / pixel_height}")
     .replace(/[vh]-?\d+$/, 'z')
+
+IsFullWidth = (char, map) ->
+  if !map.length # target null
+    result = false
+  else
+    result = map.includes(char); # half:false, full: true
+
+SetFontSetting = (width=null, height=null) ->
+  if width != null
+    font_width = width * 100
+    pixel_width = width
+  if height != null
+    font_height = height * 100
+    pixel_height = height
 
 ConvertImg2Svg = (setting, imgpath=imgPath, svgpath=outputPath) ->
   getPixels( "#{imgpath}/#{setting.img}", (err, pixels)->
     throw "Bad image path" if err
     
-    img = new PixelImage( pixels.data, pixels.shape[1], pixels.shape[0] )
+    img = new PixelImage( pixels.data, pixels.shape[0], pixels.shape[1] )
+    ja_map = setting.ja_map.flat()
     
     paths = {}
     for y in [0..(setting.map.length - 1)]
       for x in [0..(setting.map[y].length - 1)]
-        paths[setting.map[y].charAt(x)] = pixelsToPath( 
-          img.getSubPixels( x * setting.size, y * setting.size, setting.size, setting.size ), 
-          setting
-        )
+        # full-width
+        if IsFullWidth(setting.map[y][x], ja_map)
+          SetFontSetting(setting.ja_width, setting.ja_height)
+          paths[setting.map[y].charAt(x)] = pixelsToPath( 
+            img.getSubPixels( x * setting.ja_width, y * setting.ja_height, setting.ja_width, setting.ja_height ), 
+            setting
+          )
+        # half-width
+        else
+          SetFontSetting(setting.width, setting.height)
+          paths[setting.map[y].charAt(x)] = pixelsToPath( 
+            img.getSubPixels( x * setting.width, y * setting.height, setting.width, setting.height ), 
+            setting
+          )
     
+    SetFontSetting(setting.width, setting.height)
     fs.writeFileSync( 
       "#{svgpath}/#{setting.name}.svg", createSvg( paths, setting )
     )

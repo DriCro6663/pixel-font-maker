@@ -23,7 +23,7 @@ It can be easily converted by running convert.bat, sorry Mac / Linux users, but 
 # Usage
 Execute convert.bat to convert pixel-font-img in the font-img folder to font-svg. The converted font-svg will be output to the font-svg folder.
 
-If you want to use .ttf and .otf files, go to [IcoMoonApp](http://icomoon.io/app/#/select) and convert the .svg files. See [HowToConvert](##HowToConvert) for detailed instructions.
+If you want to use .ttf file, go to [IcoMoonApp](http://icomoon.io/app/#/select) and convert the .svg files. See [HowToConvert](##HowToConvert) for detailed instructions.
 
 ## HowToConvert
 
@@ -45,7 +45,7 @@ If you want to use .ttf and .otf files, go to [IcoMoonApp](http://icomoon.io/app
 
 5. Click on the gear symbol to edit the meta information and other options. If you do not want to edit, go to next step.
 6. Click "Download" to download the zip file. 
-7. After downloading and unzipping the zip file, you will find the font files in .ttf and .otf format in the [font] folder.
+7. After downloading and unzipping the zip file, you will find the font files in .ttf format in the [font] folder.
 
 </div></details>　　
 
@@ -116,6 +116,14 @@ C:\Windows\Microsoft.NET\Framework\[.NET_version]\jsc.exe index.js
 # Note
 
 * If you cannot convert the file by executing convert.bat, please build the environment by referring to [BuildTheEnvironment](#BuildTheEnvironment), and then execute the script to convert the file.
+* When using font images created by Aseprite or other programs, the image may not be read correctly. In that case, edit copy of default image, e.g. 8x8, to recognize font correctly.
+
+# Updates
+
+* 2021/11/11: <br> 
+Added the ability to set the width and height of the font for each half-width and full-width character.
+* 2021/11/04: <br> 
+First commit
 
 # Developer Information
 

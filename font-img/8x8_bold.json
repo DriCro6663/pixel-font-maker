@@ -1,9 +1,13 @@
 {
 	"img": "8x8_bold.png",
-	"size": 8,
 	"name": "8x8_bold",
+	"width": 8,
+	"height": 8,
 	"map": [
 		"1234567890!?.,()｢｣-",
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	]
+	],
+	"ja_width": 8,
+	"ja_height": 8,
+	"ja_map": []
 }
